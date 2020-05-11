@@ -15,7 +15,6 @@ services:
       - "9010:9000"
     volumes:
       - ../project:/var/www/symfony:cached
-      - ./logs/project:/var/www/symfony/var/logs:cached
     links:
       - mysql
   nginx:
