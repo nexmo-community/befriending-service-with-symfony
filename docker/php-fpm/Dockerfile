@@ -8,7 +8,7 @@ RUN apt-get install -y libzip-dev zlib1g-dev libpq-dev git libicu-dev libxml2-de
     && docker-php-ext-install pdo pdo_mysql mysqli \
     && docker-php-ext-install zip xml
 
-RUN curl --insecure https://getcomposer.org/composer.phar -o /usr/bin/composer && chmod +x /usr/bin/composer
+RUN curl --insecure https://getcomposer.org/download/1.10.6/composer.phar -o /usr/bin/composer && chmod +x /usr/bin/composer
 
 # Set timezone
 RUN rm /etc/localtime
