@@ -7,7 +7,7 @@ services:
     environment:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
-      MYSQL_DATABASE: lcs
+      MYSQL_DATABASE: befriending
       MYSQL_ROOT_PASSWORD: root_password
   php:
     build: php-fpm
