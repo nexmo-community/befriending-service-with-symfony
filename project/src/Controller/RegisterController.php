@@ -91,11 +91,12 @@ class RegisterController extends AbstractController
             if ($verify instanceof Verification) {
                 $user->setVerificationRequestId(null);
                 $user->setVerified(true);
+                $user->setActive(true);
     
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->flush();
 
-                return $this->redirectToRoute('app_register_verify', ['user' => $user->getId()]);
+                return $this->redirectToRoute('app_register_success');
             }
         }
     
