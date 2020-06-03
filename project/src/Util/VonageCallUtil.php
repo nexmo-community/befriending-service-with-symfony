@@ -78,7 +78,6 @@ class VonageCallUtil
                 'ncco' => $ncco
             ]);
         } catch (\Exception $e) {
-            dump($e->getMessage());
         }
     }
 }
