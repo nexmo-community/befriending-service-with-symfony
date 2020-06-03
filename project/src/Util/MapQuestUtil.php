@@ -31,7 +31,7 @@ class MapQuestUtil
             return null;
         }
  
-        $body = json_decode($response->getBody()->getContents());
+        $body = json_decode($response->getBody()->getContents(), true);
  
         if (!is_array($body) || empty($body)) {
             return null;

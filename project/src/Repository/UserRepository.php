@@ -19,32 +19,32 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findPossibleMatchesByDistance(User $user, array $activeUsers, int $distance)
     {
+        $queryBuilder = $this->createQueryBuilder('u');
+    
         return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
+            ->addSelect(
+                '( 3959 * acos(cos(radians(:latitude))' .
+                    '* cos(radians(u.latitude))' .
+                    '* cos(radians(u.longitude)' .
+                    '- radians(:longitude))' .
+                    '+ sin(radians(:latitude))' .
+                    '* sin(radians(u.latitude)))) as distance'
+            )
+            ->andWhere($queryBuilder->expr()->eq('u.active', ':isActive'))
+            ->andWhere($queryBuilder->expr()->eq('u.verified', ':isVerified'))
+            ->andWhere($queryBuilder->expr()->neq('u', ':user'))
+            ->having($queryBuilder->expr()->lt('distance', ':distance'))
+            ->setParameters([
+                'latitude' => $user->getLatitude(),
+                'longitude' => $user->getLongitude(),
+                'user' => $user,
+                'distance' => $distance,
+                'isActive' => true,
+                'isVerified' => true
+            ])
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?User
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

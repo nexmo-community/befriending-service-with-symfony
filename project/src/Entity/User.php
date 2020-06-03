@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -70,10 +72,16 @@ class User
      */
     private $longitude;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Match::class, mappedBy="callerOne")
+     */
+    private $matches;
+
     public function __construct()
     {
         $this->setActive(false);
         $this->setVerified(false);
+        $this->matches = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -197,6 +205,37 @@ class User
     public function setLongitude(?string $longitude): self
     {
         $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Match[]
+     */
+    public function getMatches(): Collection
+    {
+        return $this->matches;
+    }
+
+    public function addMatch(Match $match): self
+    {
+        if (!$this->matches->contains($match)) {
+            $this->matches[] = $match;
+            $match->setCallerOne($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMatch(Match $match): self
+    {
+        if ($this->matches->contains($match)) {
+            $this->matches->removeElement($match);
+            // set the owning side to null (unless already changed)
+            if ($match->getCallerOne() === $this) {
+                $match->setCallerOne(null);
+            }
+        }
 
         return $this;
     }
