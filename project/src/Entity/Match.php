@@ -38,6 +38,26 @@ class Match
      */
     private $conferenceName;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $callerOneFeedbackAccepted;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $callerTwoFeedbackAccepted;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $callerOneCallSuccessful;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $callerTwoCallSuccessful;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -75,6 +95,54 @@ class Match
     public function setConferenceName(string $conferenceName): self
     {
         $this->conferenceName = $conferenceName;
+
+        return $this;
+    }
+
+    public function getCallerOneFeedbackAccepted(): ?bool
+    {
+        return $this->callerOneFeedbackAccepted;
+    }
+
+    public function setCallerOneFeedbackAccepted(?bool $callerOneFeedbackAccepted): self
+    {
+        $this->callerOneFeedbackAccepted = $callerOneFeedbackAccepted;
+
+        return $this;
+    }
+
+    public function getCallerTwoFeedbackAccepted(): ?bool
+    {
+        return $this->callerTwoFeedbackAccepted;
+    }
+
+    public function setCallerTwoFeedbackAccepted(?bool $callerTwoFeedbackAccepted): self
+    {
+        $this->callerTwoFeedbackAccepted = $callerTwoFeedbackAccepted;
+
+        return $this;
+    }
+
+    public function getCallerOneCallSuccessful(): ?bool
+    {
+        return $this->callerOneCallSuccessful;
+    }
+
+    public function setCallerOneCallSuccessful(?bool $callerOneCallSuccessful): self
+    {
+        $this->callerOneCallSuccessful = $callerOneCallSuccessful;
+
+        return $this;
+    }
+
+    public function getCallerTwoCallSuccessful(): ?bool
+    {
+        return $this->callerTwoCallSuccessful;
+    }
+
+    public function setCallerTwoCallSuccessful(?bool $callerTwoCallSuccessful): self
+    {
+        $this->callerTwoCallSuccessful = $callerTwoCallSuccessful;
 
         return $this;
     }

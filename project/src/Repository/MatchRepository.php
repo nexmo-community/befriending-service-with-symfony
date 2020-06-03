@@ -41,4 +41,18 @@ class MatchRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getTodaysMatches()
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+     
+        return $this->createQueryBuilder('m')
+            ->andWhere(
+                $queryBuilder->expr()->isNull('m.callerOneCallSuccessful'),
+                $queryBuilder->expr()->like('Date(m.createdAt)', ':date')
+            )
+            ->setParameter('date', (new \DateTime())->format('Y-m-d') . '%')
+            ->getQuery()
+            ->getResult();
+    }
 }

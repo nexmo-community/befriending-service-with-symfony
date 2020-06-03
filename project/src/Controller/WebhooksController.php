@@ -97,6 +97,220 @@ class WebhooksController extends AbstractController
         return new JsonResponse($ncco);
     }
 
+    /**
+     * @Route("/webhooks/userFeedback", name="match_feedback")
+     */
+    public function getUserFeedback(Request $request)
+    {
+        $content = json_decode($request->getContent(), true);
+    
+        if (!in_array($content['dtmf'], ['1', '2'])) {
+            $ncco = [
+                [
+                    'action' => 'talk',
+                    'text' => 'Please only enter 1 or 2. Would you like to provide feedback for the service?',
+                    'voiceName' => 'Amy',
+                ],
+                [
+                    'action' => 'input',
+                    'maxDigits' => 1,
+                    'eventUrl' => [
+                        $request->getScheme().'://'.$request->getHost().'/webhooks/userFeedback'
+                    ],
+                    'timeOut' => 10
+                ]
+            ];
+        } else {
+            // Find user by number.
+            $user = $this->findUserByNumber($content['to']);
+            // Find match by user and today.
+            $match = $this->findMatchByUser($user)[0];
+            // Determine if user is first or second caller.
+            $isFirstOrSecond = $this->isFirstOrSecondCaller($match, $user);
+    
+            // Save entry to database.
+            if ($isFirstOrSecond === 1) {
+                $method = 'setCallerOneFeedbackAccepted';
+            } elseif ($isFirstOrSecond === 2) {
+                $method = 'setCallerTwoFeedbackAccepted';
+            } else {
+                return new JsonResponse([]);
+            }
+    
+            $mapResponse = [
+                '1' => true,
+                '2' => false
+            ];
+    
+            $match->$method($mapResponse[$content['dtmf']]);
+            $this->entityManager->flush();
+    
+            // Make next request.
+            $ncco = [
+                [
+                    'action' => 'talk',
+                    'text' => 'Thank you. Was the call successful? Please enter 1 for yes, or 2 for no.',
+                    'voiceName' => 'Amy',
+                ],
+                [
+                    'action' => 'input',
+                    'maxDigits' => 1,
+                    'eventUrl' => [
+                        $_ENV['NGROK_URL'] . '/webhooks/userFeedbackCallSuccess'
+                    ],
+                    'timeOut' => 10
+                ]
+            ];
+        }
+    
+        return new JsonResponse($ncco);
+    }
+
+    /**
+     * @Route("/webhooks/userFeedbackCallSuccess", name="match_call_success")
+     */
+    public function getUserFeedbackCallSuccess(Request $request)
+    {
+        $content = json_decode($request->getContent(), true);
+    
+        if (!in_array($content['dtmf'], ["1", "2"])) {
+            $ncco = [
+                [
+                    'action' => 'talk',
+                    'text' => 'Please only enter 1 or 2. Was the call successful? Please enter 1 for yes or 2 for no.',
+                    'voiceName' => 'Amy',
+                ],
+                [
+                    'action' => 'input',
+                    'maxDigits' => 1,
+                    'eventUrl' => [
+                        $request->getScheme().'://'.$request->getHost().'/webhooks/userFeedbackCallSuccess'
+                    ],
+                    'timeOut' => 10
+                ]
+            ];
+        } else {
+            // Find user by number.
+            $user = $this->findUserByNumber($content['to']);
+            // Find match by user and today.
+            $match = $this->findMatchByUser($user)[0];
+            // Determine if user is first or second caller.
+            $isFirstOrSecond = $this->isFirstOrSecondCaller($match, $user);
+    
+            // Save entry to database.
+            if ($isFirstOrSecond === 1) {
+                $method = 'setCallerOneCallSuccessful';
+            } elseif ($isFirstOrSecond === 2) {
+                $method = 'setCallerTwoCallSuccessful';
+            } else {
+                return new JsonResponse([]);
+            }
+    
+            $mapResponse = [
+                '1' => true,
+                '2' => false
+            ];
+    
+            $match->$method($mapResponse[$content['dtmf']]);
+            $this->entityManager->flush();
+    
+            // Make next request.
+            $ncco = [
+                [
+                    'action' => 'talk',
+                    'text' => 'Would you like to have another call tomorrow? Please enter 1 for yes or 2 for no.',
+                    'voiceName' => 'Amy',
+                ],
+                [
+                    'action' => 'input',
+                    'maxDigits' => 1,
+                    'eventUrl' => [
+                        $_ENV['NGROK_URL'] . '/webhooks/userFeedbackContinue'
+                    ],
+                    'timeOut' => 10
+                ]
+            ];
+        }
+    
+        return new JsonResponse($ncco);
+    }
+
+    /**
+     * @Route("/webhooks/userFeedbackContinue", name="match_user_continue")
+     */
+    public function getUserFeedbackContinue(Request $request)
+    {
+        $content = json_decode($request->getContent(), true);
+    
+        if (!in_array($content['dtmf'], ["1", "2"])) {
+            $ncco = [
+                [
+                    'action' => 'talk',
+                    'text' => 'Please only enter 1 or 2. Would you like to have another call tomorrow? Please enter 1 for yes or 2 for no.',
+                    'voiceName' => 'Amy',
+                ],
+                [
+                    'action' => 'input',
+                    'maxDigits' => 1,
+                    'eventUrl' => [
+                        $_ENV['NGROK_URL'] . '/webhooks/userFeedbackContinue'
+                    ],
+                    'timeOut' => 10
+                ]
+            ];
+        } else {
+            // Find user by number.
+            $user = $this->findUserByNumber($content['to']);
+            // Find match by user and today.
+            $match = $this->findMatchByUser($user);
+    
+            if (!$match) {
+                return new JsonResponse([]);
+            }
+    
+            $mapResponse = [
+                '1' => true,
+                '2' => false
+            ];
+    
+            if ($content['dtmf'] === "2") {
+                $user->setActive(false);
+                $this->entityManager->flush();
+    
+                $ncco = [
+                    [
+                        'action' => 'talk',
+                        'text' => 'Thank you for your feedback. Your number has been removed from the list.',
+                        'voiceName' => 'Amy',
+                    ]
+                ];
+            } else {
+                $ncco = [
+                    [
+                        'action' => 'talk',
+                        'text' => 'Thank you for your feedback. Goodbye.',
+                        'voiceName' => 'Amy',
+                    ],
+                ];
+            }
+        }
+    
+        return new JsonResponse($ncco);
+    }
+
+    private function isFirstOrSecondCaller(Match $match, User $user): ?int
+    {
+        if ($match->getCallerOne() === $user) {
+            return 1;
+        }
+    
+        if ($match->getCallerTwo() === $user) {
+            return 2;
+        }
+    
+        return null;
+    }
+
     private function findUserByNumber(string $phoneNumber)
     {
         return $this->entityManager->getRepository(User::class)->findOneByPhoneNumber(

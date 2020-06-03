@@ -80,4 +80,25 @@ class VonageCallUtil
         } catch (\Exception $e) {
         }
     }
+
+    public function makeFeedbackCall(User $user)
+    {
+        $ncco = [
+            [
+                'action' => 'talk',
+                'text' => 'Thank you for using the Befriending service. Could you please provide feedback for your call today? Enter 1 for yes, or two for no.',
+                'voiceName' => 'Amy',
+            ],
+            [
+                'action' => 'input',
+                'maxDigits' => 1,
+                'eventUrl' => [
+                    $_ENV['NGROK_URL'] . '/webhooks/userFeedback'
+                ],
+                'timeOut' => 10
+            ]
+        ];
+     
+        $this->makeCall($user, $ncco);
+    }    
 }
