@@ -11,7 +11,10 @@ The `master` branch is the starting branch for the accompanying post at: [Blog p
 - [Prerequisites](#prerequisites)
 - [Getting Started](#getting-started)
   - [Clone the Repository](#clone-the-repository)
+  - [Database Credentials](#database-credentials)
   - [Run Docker](#run-docker)
+  - [Install Third Party Libraries](#install-third-party-libraries)
+  - [Test Run the Application](#test-run-the-application)
 - [Code of Conduct](#code-of-conduct)
 - [Contributing](#contributing)
 - [License](#license)
@@ -20,12 +23,12 @@ The `master` branch is the starting branch for the accompanying post at: [Blog p
 
 - [Docker](https://www.docker.com/)
 - [Node Package Manager (NPM)](https://www.npmjs.com/get-npm)
-- [A Vonage (formally Nexmo) account](https://dashboard.nexmo.com/sign-up?utm_source=DEV_REL&utm_medium=github&utm_campaign=https://github.com/nexmo-community/verify-user-registrations-with-symfony)
+- [A Vonage (formally Nexmo) account](https://dashboard.nexmo.com/sign-up?utm_source=DEV_REL&utm_medium=github&utm_campaign=befriending-service-with-symfony)
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
 ## Getting Started
 
-### Cloning the Repository
+### Clone the Repository
 
 Run the following two commands to clone this repository and change directory into the repository directory.
 
@@ -42,13 +45,13 @@ Within the `project/` directory create a `.env.local` file, which will be where 
 DATABASE_URL=mysql://user:password@mysql:3306/befriending?serverVersion=8.0.17&charset=utf8
 ```
 
-### Running Docker
+### Run Docker
 
 Within the `docker/` directory run: `docker-compose up -d`.
 
 Once completed should be shown the confirmation that the three containers are running.
 
-### Installing Third Party Libraries
+### Install Third Party Libraries
 
 Several third party libraries already defined and need to be installed, via Composer.
 
