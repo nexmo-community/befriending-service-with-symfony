@@ -20,7 +20,7 @@
         "symfony/notifier": "5.0.*",
         "symfony/orm-pack": "*",
         "symfony/process": "5.0.*",
-        "symfony/security-bundle": "5.0.*",
+        "symfony/security-bundle": "6.4.*",
         "symfony/serializer-pack": "*",
         "symfony/string": "5.0.*",
         "symfony/translation": "5.0.*",
